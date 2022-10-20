@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="es">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>ESP32</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Bungee+Spice&family=Righteous&display=swap" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
+        <script src="http://cdn.rawgit.com/Mikhus/canvas-gauges/gh-pages/download/2.1.7/all/gauge.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="style.css">
+    </head>
+    <body>
+        
+        <div class="container-fluid text-center">
+            <div class="row">
+                <div class="col align-items-center d-flex">
+                    <img src="https://ucblpz.com/wp-content/uploads/2018/12/UCB-logo-lapaz.png" class="img-fluid">
+                </div>
+                <div class='col mt-5'>
+                    <h1>ESP32 Juernes</h1>
+                </div>
+                <div class="col">
+                    <img src="https://raw.githubusercontent.com/3m3rs0n/Security/main/logo.png"  width="200" alt="">
+                </div>
+            </div>
+        </div>
+        <h1 class="text-center">INTENSIDAD DE LA BOMBILLA</h1>
+
+        <div class="container bg-light bg-opacity-25">
+            <form action="/SLIDER" method="post" id="pwm">
+                <label for="Range1" class="form-label">bombilla</label>
+                <label for="Range1" class="form-label" id="bomb-l"></label>
+                <input type="range" class="form-range" id="bomb" min="0" max="255"  value="0" name="bomb">
+                <div class="container text-center">
+                    <button type="submit" class="btn btn-success btn-lg">Enviar</button>
+                </div>
+            </form>
+        </div>
+        <hr>
+
+        <h1 class="text-center">ENCENDER FOCO</h1>
+
+        <div class="container text-center">
+            <button class="btn btn-success btn-lg" onclick="foco(true)">ENCENDER</button>
+            <button class="btn btn-danger btn-lg" onclick="foco(false)">APAGAR</button>
+        </div>
+        <h1 class="text-center">ENCENDER FOCO POR HORARIO</h1>
+        <div class="container text-center">
+            <button class="btn btn-success btn-lg" onclick="hora()">Horario</button>
+            
+        </div>
+      
+       
+        <h1 class="text-center">Datos de conexión</h1>
+
+        <div class="container text-center">
+            <div class="row">
+                <div class="col">
+                    <h1>NOMBRE</h1>
+                    <h3 id="ssid"></h3>
+                </div>
+                <div class="col">
+                    <h1>POTENCIA</h1>
+                    <canvas id="rsid"></canvas>
+                </div>
+                <div class="col">
+                    <h1>IP</h1>
+                    <h3 id="ip"></h3>
+                </div>
+                <div class="col">
+                    <h1>ESTADO</h1>
+                    <h3 id="status"></h3>
+                </div>
+            </div>
+        </div>
+        
+        <hr>
+
+        <div class="container-fluid text-center mt-5">
+            <h1>Integrantes</h1>
+            <div class="row">
+                <div class="col">
+                    <img src="https://scontent.flpb1-1.fna.fbcdn.net/v/t1.18169-9/16729524_1036967873081849_5703468641451093347_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=09cbfe&_nc_ohc=Y4bcAlAdp88AX91PooG&_nc_ht=scontent.flpb1-1.fna&oh=00_AT8DQiBykTdYW9Z704-VTw2ROmalmZOFq8Qr4H7cOitZog&oe=635422D2" class="int-img" alt="">
+                </div>
+                <div class="col">
+                    <img src="https://scontent.flpb1-2.fna.fbcdn.net/v/t39.30808-6/302327553_5452262018192767_197903321691436344_n.jpg?_nc_cat=111&ccb=1-7&_nc_sid=09cbfe&_nc_ohc=7WIKHDXWyC4AX-Saasb&_nc_ht=scontent.flpb1-2.fna&oh=00_AT-NZoe6bNWwLUAnFHRe-50GmgUTvOr6Pql9DcUpEURVYw&oe=6351C084"  class="int-img" alt="">
+                </div>
+                <div class="col">
+                    <img src="https://lh3.googleusercontent.com/a-/ACNPEu9nN_VmsKrjWaC5JRkxeT1KXVJIxRPSpdsif2__=s288-p-rw-no" class="int-img" alt="">
+                </div>
+            </div>
+        </div>
+
+        <hr>
+        <div class="barra">
+            <small>©COPYRIGHT IOT II-2022</small>
+        </div>
+
+        <script>
+            const ssid = document.getElementById("ssid");
+            const ip = document.getElementById("ip");
+            const st = document.getElementById("status");
+            var rssid = new RadialGauge({
+                renderTo: 'rsid',
+                width: 200,
+                height: 200,
+                units: "dB",
+                title: "Potencia WIFI",
+                minValue: -80,
+                maxValue: 0,
+                majorTicks: [
+                    -80,
+                    -70,
+                    -60,
+                    -50,
+                    -40,
+                    -30,
+                    -20,
+                    -10,
+                    0,
+                ],
+                minorTicks: 2,
+                strokeTicks: true,
+                highlights: [
+                    {
+                        "from": -50,
+                        "to": 0,
+                        "color": "rgba(0,0, 255, .3)"
+                    },
+                    {
+                        "from": 0,
+                        "to": 50,
+                        "color": "rgba(255, 0, 0, .3)"
+                    }
+                ],
+                ticksAngle: 225,
+                startAngle: 67.5,
+                colorMajorTicks: "#ddd",
+                colorMinorTicks: "#ddd",
+                colorTitle: "#eee",
+                colorUnits: "#ccc",
+                colorNumbers: "#eee",
+                colorPlate: "#222",
+                borderShadowWidth: 0,
+                borders: true,
+                needleType: "arrow",
+                needleWidth: 2,
+                needleCircleSize: 7,
+                needleCircleOuter: true,
+                needleCircleInner: false,
+                animationDuration: 1500,
+                animationRule: "linear",
+                colorBorderOuter: "#333",
+                colorBorderOuterEnd: "#111",
+                colorBorderMiddle: "#222",
+                colorBorderMiddleEnd: "#111",
+                colorBorderInner: "#111",
+                colorBorderInnerEnd: "#333",
+                colorNeedleShadowDown: "#333",
+                colorNeedleCircleOuter: "#333",
+                colorNeedleCircleOuterEnd: "#111",
+                colorNeedleCircleInner: "#111",
+                colorNeedleCircleInnerEnd: "#222",
+                valueBoxBorderRadius: 0,
+                colorValueBoxRect: "#222",
+                colorValueBoxRectEnd: "#333"
+            }).draw();
+
+            function getDataConexion(){
+                var xhr = new XMLHttpRequest();
+                xhr.onreadystatechange = function() {
+                    if (this.readyState == 4 && this.status == 200) {
+                        var myObj = JSON.parse(this.responseText);
+                        ssid.textContent = myObj.ssid;
+                        ip.textContent = myObj.dip;
+                        st.textContent = myObj.status
+                        rssid.value = myObj.rsid;
+                    }
+                }; 
+                xhr.open("GET", "/INFO", true);
+                xhr.send();
+            }
+
+            function foco(flag){
+                var xhr = new XMLHttpRequest();
+                if(flag==true){
+                    xhr.open("GET","/ON",true);
+                    xhr.send();
+                }else{
+                    xhr.open("GET","/OFF",true);
+                    xhr.send();
+                }
+                
+            }
+            
+
+            function hora(){
+                myDate = new Date();
+                hours = myDate.getHours();
+                var xhr = new XMLHttpRequest();
+                if( hours > 18 && hours < 6){
+                
+                xhr.open("GET","/OFF",true);
+                    xhr.send();
+            
+                }else{
+                    xhr.open("GET","/ON",true);
+                    xhr.send();
+                }
+                
+            }
+
+            setInterval(function ( ) {
+                getDataConexion();
+            }, 10000 ) ;
+        </script>
+        
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-u1OknCvxWvY5kfmNBILK2hRnQC3Pr17a+RTT6rIHI7NnikvbZlHgTPOOmMi466C8" crossorigin="anonymous"></script>
+    </body>
+</html>

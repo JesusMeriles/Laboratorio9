@@ -1,0 +1,39 @@
+body{
+    background: rgb(231, 130, 58);
+    background: linear-gradient(0deg, rgb(247, 114, 88) 5%, rgb(255, 177, 88) 42%);
+    background-repeat: no-repeat;
+    height: 100%;
+}
+
+h1{
+    font-family: 'Bungee Spice', cursive;
+}
+
+.form-label{
+    font-family: 'Bungee Spice', cursive;
+}
+
+.barra{
+    background-color: black;
+    color: white;
+    text-align: center;
+    position: absolute;
+    bottom: auto;
+    width: 100%;
+    height: 40px;
+}
+
+h3{
+    font-family: 'Righteous', cursive;
+    color: rgb(196, 81, 0);
+}
+
+.img-fluid{
+    min-width: 200px;
+}
+
+.int-img{
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+}
